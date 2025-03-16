@@ -1,0 +1,101 @@
+CREATE TABLE IF NOT EXISTS public.clients
+(
+    id serial NOT NULL,
+    client_id character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    name character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    organization character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    mobile character varying(15) COLLATE pg_catalog."default" NOT NULL,
+    email character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    password character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    logo character varying(255) COLLATE pg_catalog."default",
+    db_name character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    db_user character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    db_password character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    db_host character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    db_port integer NOT NULL,
+    registration_date date,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    validity_till date,
+    status integer,
+    schema character varying(255) COLLATE pg_catalog."default",
+    number_of_users integer,
+    CONSTRAINT clients_pkey PRIMARY KEY (id),
+    CONSTRAINT clients_client_id_key UNIQUE (client_id),
+    CONSTRAINT clients_db_name_key UNIQUE (db_name),
+    CONSTRAINT clients_db_password_key UNIQUE (db_password),
+    CONSTRAINT clients_db_user_key UNIQUE (db_user),
+    CONSTRAINT clients_email_key UNIQUE (email),
+    CONSTRAINT clients_mobile_key UNIQUE (mobile),
+    CONSTRAINT clients_name_email_mobile_client_id_db_name_db_user_db_pass_key UNIQUE (name, email, mobile, client_id, db_name, db_user, db_password),
+    CONSTRAINT clients_name_key UNIQUE (name)
+);
+
+
+
+CREATE TABLE IF NOT EXISTS public.reset_tokens
+(
+    id bigserial NOT NULL,
+    user_id integer,
+    token integer,
+    dateadded timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    createdby integer,
+    CONSTRAINT contactsincampaign_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.schedules
+(
+    id bigint NOT NULL,
+    schedule time without time zone,
+    CONSTRAINT schedules_pkey PRIMARY KEY (id)
+);
+
+
+
+
+
+CREATE TABLE IF NOT EXISTS public.users
+(
+    userid serial NOT NULL,
+    username character varying(255) COLLATE pg_catalog."default",
+    email character varying(255) COLLATE pg_catalog."default",
+    mobile character varying(20) COLLATE pg_catalog."default",
+    role character varying(20) COLLATE pg_catalog."default",
+    validityyn character(1) COLLATE pg_catalog."default",
+    validtill date,
+    password character varying(255) COLLATE pg_catalog."default",
+    active character(1) COLLATE pg_catalog."default",
+    datecreated timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    datemodified timestamp with time zone,
+    datedeleted timestamp with time zone,
+    createdby integer,
+    updatedby integer,
+    deletedby integer,
+    email_verify_at timestamp without time zone,
+    client_id character varying COLLATE pg_catalog."default",
+    CONSTRAINT users_pkey PRIMARY KEY (userid)
+);
+
+
+
+
+ALTER TABLE IF EXISTS public.users
+    ADD CONSTRAINT users_createdby_fkey FOREIGN KEY (createdby)
+    REFERENCES public.users (userid) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
+
+
+ALTER TABLE IF EXISTS public.users
+    ADD CONSTRAINT users_deletedby_fkey FOREIGN KEY (deletedby)
+    REFERENCES public.users (userid) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
+
+
+ALTER TABLE IF EXISTS public.users
+    ADD CONSTRAINT users_updatedby_fkey FOREIGN KEY (updatedby)
+    REFERENCES public.users (userid) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
+
+END;

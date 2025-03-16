@@ -1,0 +1,31 @@
+-- Create Table
+CREATE TABLE IF NOT EXISTS public.leave_applications_new (
+    id SERIAL PRIMARY KEY,                  -- Auto-increment ID
+    userid INTEGER NOT NULL,                -- User ID (Foreign Key)
+    user_name VARCHAR(255) NOT NULL,        -- User Name
+    leave_type_id INTEGER NOT NULL,         -- Leave Type ID
+    from_date DATE NOT NULL,                -- From Date
+    to_date DATE NOT NULL,                  -- To Date
+    leave_days INTEGER GENERATED ALWAYS AS (to_date - from_date) STORED, -- Auto-calculated Leave Days
+    reason TEXT,                            -- Reason for leave
+    status VARCHAR(20) DEFAULT 'Pending',   -- Status
+    requested_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Requested Date
+    reject_reason TEXT,                     -- Rejection Reason
+    profile_picture VARCHAR(255),           -- Profile Picture
+    file VARCHAR(255),                      -- File Attachment
+    approved_by VARCHAR(255),               -- Approver's Name
+    approved_date TIMESTAMP,                -- Approval Date
+    remarks TEXT,                           -- Additional Remarks
+    CONSTRAINT fk_user FOREIGN KEY (userid) REFERENCES users(userid) ON DELETE CASCADE
+);
+
+-- Insert Data
+INSERT INTO public.leave_applications_new (
+    userid, user_name, leave_type_id, from_date, to_date, reason, status, 
+    requested_date, reject_reason, profile_picture, file, approved_by, approved_date, remarks
+) VALUES
+(1, 'Alice', 2, '2024-12-10', '2024-12-12', 'Family Function', 'Approved', 
+ CURRENT_TIMESTAMP, NULL, 'alice.jpg', 'leave_doc.pdf', 'Manager', '2024-12-09 10:00:00', 'Approved without issues'),
+
+(2, 'Anbu', 3, '2024-12-15', '2024-12-18', 'Medical Leave', 'Pending', 
+ CURRENT_TIMESTAMP, NULL, 'anbu.jpg', 'medical_report.pdf', NULL, NULL, 'Waiting for approval');

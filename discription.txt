@@ -1,0 +1,3 @@
+While creating the new user in 'Regsiter; , New Schema is created.
+
+turn on server in Vamtec/local server.

@@ -1,0 +1,13 @@
+CREATE TABLE leave_settings_new ( 
+    role_name VARCHAR(50),   -- Role name
+    leave_type_id INT,       -- Leave type ID (1 to 11)
+    leave_settings FLOAT     -- Leave value (default balance)
+);
+
+
+INSERT INTO leave_settings_new (role_name, leave_type_id, leave_settings)
+SELECT role_name, 
+       UNNEST(ARRAY[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]) AS leave_type_id, 
+       UNNEST(ARRAY[EL_default, SL_default, CL_default, CO_default, OOD_default, 
+                    SML_default, WFH_default, A_default, ML_default, PL_default, MP_default]) AS leave_settings
+FROM leave_set_admin;

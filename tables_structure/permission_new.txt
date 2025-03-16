@@ -1,0 +1,14 @@
+CREATE TABLE IF NOT EXISTS public.permissions_new ( 
+    id SERIAL PRIMARY KEY,               -- Unique ID
+    userid INTEGER NOT NULL,        -- User ID (Foreign Key)
+    request_date DATE NOT NULL,          -- Request Date
+    perm_date DATE NOT NULL,             -- Permission Date (renamed `date` from original)
+    from_time TIME NOT NULL,             -- Start Time
+    to_time TIME NOT NULL,               -- End Time
+    total_hours DOUBLE PRECISION,        -- Total Hours
+    status VARCHAR(50) DEFAULT 'Pending', -- Status
+    reason TEXT,                         -- Reason for Permission
+    approved_by VARCHAR(100),            -- Approver's Name
+    approved_datetime TIMESTAMP,         -- Approval Timestamp
+    CONSTRAINT fk_user FOREIGN KEY (userid) REFERENCES users(userid) ON DELETE CASCADE
+);

@@ -1,0 +1,2 @@
+title,type,remarks,message,start_date,status,frequency,year_num,month_num,week_num,day_num,day_name,recurring,contact_type,contacts,cc,bcc,subject,is_group
+Daily,Marketing,Daily Remarks,Daily Message,3/9/2024,1,daily,1,,,,,Y,Employee,,,,Test Subject,1

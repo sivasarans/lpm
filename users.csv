@@ -1,0 +1,11 @@
+userid,username,email,mobile,role,validityyn,validtill,password,active,datecreated,datemodified,datedeleted,createdby,updatedby,deletedby,email_verify_at,client_id
+14,Srini2,srini2@gmail.com,6161616161,Manage,N,,$2b$05$9f36ONgrHf028cg1HaEX/O0b4XREXMTmDNr3q9/iJHWK3utUfKGPO,1,2024-09-15 13:10:39.225+05:30,,,,,,,sritech20240915
+15,Srini3,srini3@gmail.com,9191717161,Admin,N,,$2b$05$Uslal4qhAFqTnTpWngR8vedaP0WjzUwg5r/j9XALr3O4FMkaQCxqm,1,2024-09-15 13:11:19.892+05:30,,,,,,,sritech20240915
+9,admin1,admin1@gmail.com,7373737376,Admin,Y,2024-04-08,$2b$05$QU9P8NS8o9OfMyv9Pqej.uHKEbb60t3t.O6cZIHjd6AK2hSGqLdke,1,2024-04-06 05:17:28.334+05:30,,,,,,,sritech20240915
+16,Seenuvasan,vbseenuvas1@gmail.com,7171718181,Admin,N,,$2b$05$PRp/vGozvd7sMBC2Ubupw.vi.bZBk6VaHvn8Lfp7Id3zR6r0jLOt.,1,2024-10-13 21:17:55.865+05:30,,,,,,,qa20241013
+8,User2,user2@gmail.com,7373737337,Manage,N,,$2b$05$CelcOTsNxVFRaiu97Wy4YuUq9tGF1McNXqS5/SXkT.NHlXTWbBkLK,1,2024-04-05 17:45:09.401+05:30,,,,,,,
+5,admin2,admin2@gmail.com,7575757576,Admin,N,,$2b$05$qclZoYtA//kwtb0Xc1ybdemTDu24HR1ixzE/SMfxkkV7wPyqpgKx2,1,2024-03-12 17:08:12.847+05:30,,,,,,,
+1,Admin,manage@gmail.com,7373737373,Manage,Y,,$2b$05$8NDOCuw/cPmlIoyX3cp.XuUiDfNaA3JEBF8Pqtk7YGWk.fdUdy5ma,1,2024-03-09 10:57:12.890617+05:30,,,,,,,
+10,Admin3,admin3@gmail.com,7676767676,Manage,Y,2024-04-20,$2b$05$XJyokQc.O.uw4i7LukDzf.CWBvhuMEkYW5rFvOZ6X.MTxypOELZTK,1,2024-04-06 06:44:14.081+05:30,,,,,,,
+11,Srinivas,vbseenuvas@gmail.com,7171818282,Admin,N,,$2b$05$PX0/oJb5eE06YrC5DaouR.entavI5zLvGyrYlD5F2U4yqYNbih2K2,1,2024-09-15 12:31:54.178+05:30,,,,,,,sritech20240915
+13,Srini1,srini1@gmail.com,9191918182,Admin,N,,$2b$05$eryoS9qiVz7ZDzb6R/Z3F.lml04IjWYlEx4oMM0JwPCZi2mw/3vc.,1,2024-09-15 13:09:16.978+05:30,,,,,,,sritech20240915

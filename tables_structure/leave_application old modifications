@@ -1,0 +1,17 @@
+
+-- Step 2: Add trigger function
+CREATE OR REPLACE FUNCTION update_approved_date()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.approved_by IS DISTINCT FROM OLD.approved_by THEN
+        NEW.approved_date = CURRENT_TIMESTAMP;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Step 3: Add trigger
+CREATE TRIGGER update_approved_date_trigger
+BEFORE UPDATE ON public.leave_applications
+FOR EACH ROW
+EXECUTE FUNCTION update_approved_date();

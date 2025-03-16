@@ -1,0 +1,91 @@
+-- Table: public.users
+
+-- DROP TABLE IF EXISTS public.users;
+
+CREATE TABLE IF NOT EXISTS public.users
+(
+    userid integer NOT NULL DEFAULT nextval('users_userid_seq'::regclass),
+    username character varying(255) COLLATE pg_catalog."default",
+    email character varying(255) COLLATE pg_catalog."default",
+    mobile character varying(20) COLLATE pg_catalog."default",
+    role character varying(20) COLLATE pg_catalog."default",
+    validityyn character(1) COLLATE pg_catalog."default",
+    validtill date,
+    password character varying(255) COLLATE pg_catalog."default",
+    active character(1) COLLATE pg_catalog."default",
+    datecreated timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    datemodified timestamp with time zone,
+    datedeleted timestamp with time zone,
+    createdby integer,
+    updatedby integer,
+    deletedby integer,
+    email_verify_at timestamp without time zone,
+    client_id character varying COLLATE pg_catalog."default",
+    role_lpm character varying(255) COLLATE pg_catalog."default",
+    CONSTRAINT users_pkey PRIMARY KEY (userid),
+    CONSTRAINT users_createdby_fkey FOREIGN KEY (createdby)
+        REFERENCES public.users (userid) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT users_deletedby_fkey FOREIGN KEY (deletedby)
+        REFERENCES public.users (userid) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT users_updatedby_fkey FOREIGN KEY (updatedby)
+        REFERENCES public.users (userid) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.users
+    OWNER to postgres;
+
+-- Trigger: after_user_insert
+
+-- DROP TRIGGER IF EXISTS after_user_insert ON public.users;
+
+CREATE OR REPLACE TRIGGER after_user_insert
+    AFTER INSERT
+    ON public.users
+    FOR EACH ROW
+    EXECUTE FUNCTION public.insert_leave_data_after_user_creation();
+
+-- Trigger: after_user_insert_auto_add_leave_balance
+
+-- DROP TRIGGER IF EXISTS after_user_insert_auto_add_leave_balance ON public.users;
+
+CREATE OR REPLACE TRIGGER after_user_insert_auto_add_leave_balance
+    AFTER INSERT
+    ON public.users
+    FOR EACH ROW
+    EXECUTE FUNCTION public.insert_leave_balance_after_user_creation();
+
+
+
+
+
+
+    INSERT INTO leave_balance_new (userid, l_type_id, l_available, l_availed, last_modified) VALUES
+('1', 'EL', 17, 10, '2024-12-21 14:41:21.74867'),
+('1', 'SL', 5, 2, '2024-12-21 14:41:21.74867'),
+('1', 'CL', 8, 7, '2024-12-21 14:41:21.74867'),
+('1', 'CO', 2, 0, '2024-12-21 14:41:21.74867'),
+('1', 'OOD', 3, 1, '2024-12-21 14:41:21.74867'),
+('1', 'SML', 0, 0, '2024-12-21 14:41:21.74867'),
+('1', 'A', 1, 0, '2024-12-21 14:41:21.74867'),
+('1', 'ML', 0, 0, '2024-12-21 14:41:21.74867'),
+('1', 'PL', 3, 1, '2024-12-21 14:41:21.74867'),
+('1', 'MP', 0, 0, '2024-12-21 14:41:21.74867'),
+
+('2', 'EL', 16, 4, '2024-12-23 09:55:48.973438'),
+('2', 'SL', 10, 2, '2024-12-23 09:55:48.973438'),
+('2', 'CL', 9, 3, '2024-12-23 09:55:48.973438'),
+('2', 'CO', 0, 0, '2024-12-23 09:55:48.973438'),
+('2', 'OOD', 0, 0, '2024-12-23 09:55:48.973438'),
+('2', 'SML', 0, 0, '2024-12-23 09:55:48.973438'),
+('2', 'A', 0, 0, '2024-12-23 09:55:48.973438'),
+('2', 'ML', 0, 0, '2024-12-23 09:55:48.973438'),
+('2', 'PL', 0, 0, '2024-12-23 09:55:48.973438'),
+('2', 'MP', 0, 0, '2024-12-23 09:55:48.973438');

@@ -1,0 +1,5 @@
+title,type,message,start_date,status,frequency,year_num,month_num,week_num,day_num,day_name,recurring,contact_type,contacts,cc,bcc,subject,is_group,remarks
+Daily Import,Marketing,Daily Message,8-Aug-2024,1,daily,1,,,,,Y,Employee,,,,Test Subject,1,Daily Remarks
+Weekly Import,Marketing,Weekly Import Message,8-Aug-2024,1,weekly,1,,"2,4",,Sun,Y,,vbseenuvas@gmail.com,,,Test Subject,1,
+Monthly Import,Marketing,Monthly Import Message,8-Aug-2024,1,monthly,1,"8,10",1,,Mon,Y,,vbseenuvas@gmail.com,,,Test Subject,1,
+Yearly Import,Marketing,Yearly Import Message,8-Aug-2024,1,yearly,1,11,3,,Wed,Y,Employee,,,,Test Subject,1,

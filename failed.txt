@@ -1,0 +1,732 @@
+CREATE TABLE IF NOT EXISTS public.campaigns
+(
+    id bigserial NOT NULL,
+    title character varying(255) COLLATE pg_catalog."default",
+    type character varying(255) COLLATE pg_catalog."default",
+    remarks text COLLATE pg_catalog."default",
+    message text COLLATE pg_catalog."default",
+    start_date date,
+    last_notify_date date,
+    next_notify_date date,
+    status integer,
+    frequency character varying(100) COLLATE pg_catalog."default",
+    year_num integer,
+    month_num bigint[],
+    week_num bigint[],
+    day_name character varying(255)[] COLLATE pg_catalog."default",
+    date_created timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    date_modified timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    date_deleted timestamp with time zone,
+    created_by bigint,
+    updated_by bigint,
+    deleted_by bigint,
+    recurring character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    "time" time without time zone,
+    contact_type character varying(100) COLLATE pg_catalog."default",
+    contacts character varying[] COLLATE pg_catalog."default",
+    cc character varying[] COLLATE pg_catalog."default",
+    bcc character varying[] COLLATE pg_catalog."default",
+    subject character varying(100) COLLATE pg_catalog."default",
+    is_group smallint,
+    is_resume smallint,
+    day_num integer,
+    end_date date,
+    last_trigger timestamp without time zone,
+    trigger_count integer DEFAULT 0,
+    CONSTRAINT campaign_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.campaigns_import_failures
+(
+    id serial NOT NULL,
+    created_by bigint NOT NULL,
+    title character varying(255) COLLATE pg_catalog."default",
+    type character varying(255) COLLATE pg_catalog."default",
+    remarks text COLLATE pg_catalog."default",
+    message text COLLATE pg_catalog."default",
+    start_date date,
+    status integer,
+    frequency character varying(100) COLLATE pg_catalog."default",
+    year_num integer,
+    month_num bigint[],
+    week_num bigint[],
+    day_num bigint[],
+    day_name character varying(255)[] COLLATE pg_catalog."default",
+    recurring character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    contact_type character varying(100) COLLATE pg_catalog."default",
+    contacts character varying[] COLLATE pg_catalog."default",
+    cc character varying[] COLLATE pg_catalog."default",
+    bcc character varying[] COLLATE pg_catalog."default",
+    subject character varying(100) COLLATE pg_catalog."default",
+    is_group smallint,
+    validation_errors text COLLATE pg_catalog."default" NOT NULL,
+    date_created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT campaigns_import_failures_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.campaignstatuslogs
+(
+    logid serial NOT NULL,
+    campaignid integer,
+    actiondate timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    actionstatus character varying(20) COLLATE pg_catalog."default",
+    comment text COLLATE pg_catalog."default",
+    CONSTRAINT campaignstatuslogs_pkey PRIMARY KEY (logid)
+);
+
+CREATE TABLE IF NOT EXISTS public.clients
+(
+    id serial NOT NULL,
+    client_id character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    name character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    organization character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    mobile character varying(15) COLLATE pg_catalog."default" NOT NULL,
+    email character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    password character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    logo character varying(255) COLLATE pg_catalog."default",
+    db_name character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    db_user character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    db_password character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    db_host character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    db_port integer NOT NULL,
+    registration_date date,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    validity_till date,
+    status integer,
+    schema character varying(255) COLLATE pg_catalog."default",
+    number_of_users integer,
+    CONSTRAINT clients_pkey PRIMARY KEY (id),
+    CONSTRAINT clients_client_id_key UNIQUE (client_id),
+    CONSTRAINT clients_db_name_key UNIQUE (db_name),
+    CONSTRAINT clients_db_password_key UNIQUE (db_password),
+    CONSTRAINT clients_db_user_key UNIQUE (db_user),
+    CONSTRAINT clients_email_key UNIQUE (email),
+    CONSTRAINT clients_mobile_key UNIQUE (mobile),
+    CONSTRAINT clients_name_email_mobile_client_id_db_name_db_user_db_pass_key UNIQUE (name, email, mobile, client_id, db_name, db_user, db_password),
+    CONSTRAINT clients_name_key UNIQUE (name)
+);
+
+CREATE TABLE IF NOT EXISTS public.contacts
+(
+    id bigserial NOT NULL,
+    name character varying(255) COLLATE pg_catalog."default",
+    type character varying(50) COLLATE pg_catalog."default",
+    salutation character varying(255) COLLATE pg_catalog."default",
+    organization character varying(255) COLLATE pg_catalog."default",
+    job_title character varying(255) COLLATE pg_catalog."default",
+    mobile1 character varying(20) COLLATE pg_catalog."default",
+    mobile2 character varying(20) COLLATE pg_catalog."default",
+    mobile3 character varying(20) COLLATE pg_catalog."default",
+    sendmessages1 character(1) COLLATE pg_catalog."default",
+    sendmessages2 character(1) COLLATE pg_catalog."default",
+    sendmessages3 character(1) COLLATE pg_catalog."default",
+    email1 character varying(255) COLLATE pg_catalog."default",
+    email2 character varying(255) COLLATE pg_catalog."default",
+    email3 character varying(255) COLLATE pg_catalog."default",
+    status character(1) COLLATE pg_catalog."default",
+    date_created timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    date_modified timestamp with time zone,
+    date_deleted timestamp with time zone,
+    created_by integer,
+    updated_by integer,
+    deleted_by integer,
+    CONSTRAINT contacts_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.contacts_import_failures
+(
+    id bigserial NOT NULL,
+    name character varying(255) COLLATE pg_catalog."default",
+    type character varying(50) COLLATE pg_catalog."default",
+    salutation character varying(255) COLLATE pg_catalog."default",
+    organization character varying(255) COLLATE pg_catalog."default",
+    job_title character varying(255) COLLATE pg_catalog."default",
+    mobile1 character varying(20) COLLATE pg_catalog."default",
+    mobile2 character varying(20) COLLATE pg_catalog."default",
+    mobile3 character varying(20) COLLATE pg_catalog."default",
+    sendmessages1 character(1) COLLATE pg_catalog."default",
+    sendmessages2 character(1) COLLATE pg_catalog."default",
+    sendmessages3 character(1) COLLATE pg_catalog."default",
+    email1 character varying(255) COLLATE pg_catalog."default",
+    email2 character varying(255) COLLATE pg_catalog."default",
+    email3 character varying(255) COLLATE pg_catalog."default",
+    status character(1) COLLATE pg_catalog."default",
+    date_created timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    date_modified timestamp with time zone,
+    date_deleted timestamp with time zone,
+    created_by integer,
+    updated_by integer,
+    deleted_by integer,
+    validation_errors text COLLATE pg_catalog."default",
+    CONSTRAINT contacts_import_failures_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.fileattachments
+(
+    fileid serial NOT NULL,
+    campaignid integer,
+    filename character varying(255) COLLATE pg_catalog."default",
+    filepath character varying(255) COLLATE pg_catalog."default",
+    datecreated timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    datemodified timestamp with time zone,
+    datedeleted timestamp with time zone,
+    createdby integer,
+    updatedby integer,
+    deletedby integer,
+    CONSTRAINT fileattachments_pkey PRIMARY KEY (fileid)
+);
+
+CREATE TABLE IF NOT EXISTS public.mail_services
+(
+    id serial NOT NULL,
+    user_id bigint NOT NULL,
+    service text COLLATE pg_catalog."default",
+    host text COLLATE pg_catalog."default",
+    username text COLLATE pg_catalog."default",
+    password text COLLATE pg_catalog."default",
+    port text COLLATE pg_catalog."default",
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    mail_verified_at timestamp without time zone,
+    CONSTRAINT mail_services_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.reset_tokens
+(
+    id bigserial NOT NULL,
+    user_id integer,
+    token integer,
+    dateadded timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    createdby integer,
+    CONSTRAINT contactsincampaign_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.schedules
+(
+    id bigint NOT NULL,
+    schedule time without time zone,
+    CONSTRAINT schedules_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.services
+(
+    id serial NOT NULL,
+    user_id bigint NOT NULL,
+    service bytea NOT NULL,
+    host bytea NOT NULL,
+    port bytea NOT NULL,
+    username bytea NOT NULL,
+    password bytea NOT NULL,
+    created_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT services_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.user_salutation
+(
+    id bigserial NOT NULL,
+    salutation character varying COLLATE pg_catalog."default",
+    contact_id bigint,
+    user_id bigint,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    CONSTRAINT user_salutation_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.users
+(
+    userid serial NOT NULL,
+    username character varying(255) COLLATE pg_catalog."default",
+    email character varying(255) COLLATE pg_catalog."default",
+    mobile character varying(20) COLLATE pg_catalog."default",
+    role character varying(20) COLLATE pg_catalog."default",
+    validityyn character(1) COLLATE pg_catalog."default",
+    validtill date,
+    password character varying(255) COLLATE pg_catalog."default",
+    active character(1) COLLATE pg_catalog."default",
+    datecreated timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    datemodified timestamp with time zone,
+    datedeleted timestamp with time zone,
+    createdby integer,
+    updatedby integer,
+    deletedby integer,
+    email_verify_at timestamp without time zone,
+    client_id character varying COLLATE pg_catalog."default",
+    CONSTRAINT users_pkey PRIMARY KEY (userid)
+);
+
+CREATE TABLE IF NOT EXISTS user_qa20241013.campaigns
+(
+    id bigserial NOT NULL,
+    title character varying(255) COLLATE pg_catalog."default",
+    type character varying(255) COLLATE pg_catalog."default",
+    remarks text COLLATE pg_catalog."default",
+    message text COLLATE pg_catalog."default",
+    start_date date,
+    end_date date,
+    last_notify_date date,
+    next_notify_date date,
+    status integer,
+    frequency character varying(100) COLLATE pg_catalog."default",
+    year_num integer,
+    month_num bigint[],
+    week_num bigint[],
+    day_name character varying(255)[] COLLATE pg_catalog."default",
+    date_created timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    date_modified timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    last_trigger timestamp without time zone,
+    trigger_count integer DEFAULT 0,
+    date_deleted timestamp with time zone,
+    created_by bigint,
+    updated_by bigint,
+    deleted_by bigint,
+    recurring character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    "time" time without time zone,
+    contact_type character varying(100) COLLATE pg_catalog."default",
+    contacts character varying[] COLLATE pg_catalog."default",
+    cc character varying[] COLLATE pg_catalog."default",
+    bcc character varying[] COLLATE pg_catalog."default",
+    subject character varying(100) COLLATE pg_catalog."default",
+    is_group smallint,
+    is_resume smallint,
+    day_num integer,
+    CONSTRAINT campaigns_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS user_qa20241013.campaigns_import_failures
+(
+    id serial NOT NULL,
+    created_by bigint NOT NULL,
+    title character varying(255) COLLATE pg_catalog."default",
+    type character varying(255) COLLATE pg_catalog."default",
+    remarks text COLLATE pg_catalog."default",
+    message text COLLATE pg_catalog."default",
+    start_date date,
+    status integer,
+    frequency character varying(100) COLLATE pg_catalog."default",
+    year_num integer,
+    month_num bigint[],
+    week_num bigint[],
+    day_num bigint[],
+    day_name character varying(255)[] COLLATE pg_catalog."default",
+    recurring character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    contact_type character varying(100) COLLATE pg_catalog."default",
+    contacts character varying[] COLLATE pg_catalog."default",
+    cc character varying[] COLLATE pg_catalog."default",
+    bcc character varying[] COLLATE pg_catalog."default",
+    subject character varying(100) COLLATE pg_catalog."default",
+    is_group smallint,
+    validation_errors text COLLATE pg_catalog."default" NOT NULL,
+    date_created timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT campaigns_import_failures_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS user_qa20241013.campaignstatuslogs
+(
+    logid serial NOT NULL,
+    campaignid integer,
+    actiondate timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    actionstatus character varying(20) COLLATE pg_catalog."default",
+    comment text COLLATE pg_catalog."default",
+    CONSTRAINT campaignstatuslogs_pkey PRIMARY KEY (logid)
+);
+
+CREATE TABLE IF NOT EXISTS user_qa20241013.contacts
+(
+    id serial NOT NULL,
+    name character varying(255) COLLATE pg_catalog."default",
+    type character varying(50) COLLATE pg_catalog."default",
+    salutation character varying(255) COLLATE pg_catalog."default",
+    organization character varying(255) COLLATE pg_catalog."default",
+    job_title character varying(255) COLLATE pg_catalog."default",
+    mobile1 character varying(20) COLLATE pg_catalog."default",
+    mobile2 character varying(20) COLLATE pg_catalog."default",
+    mobile3 character varying(20) COLLATE pg_catalog."default",
+    sendmessages1 character(1) COLLATE pg_catalog."default",
+    sendmessages2 character(1) COLLATE pg_catalog."default",
+    sendmessages3 character(1) COLLATE pg_catalog."default",
+    email1 character varying(255) COLLATE pg_catalog."default",
+    email2 character varying(255) COLLATE pg_catalog."default",
+    email3 character varying(255) COLLATE pg_catalog."default",
+    status character(1) COLLATE pg_catalog."default",
+    date_created timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    date_modified timestamp with time zone,
+    date_deleted timestamp with time zone,
+    created_by integer,
+    updated_by integer,
+    deleted_by integer,
+    CONSTRAINT contacts_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS user_qa20241013.contacts_import_failures
+(
+    id serial NOT NULL,
+    name character varying(255) COLLATE pg_catalog."default",
+    type character varying(50) COLLATE pg_catalog."default",
+    salutation character varying(255) COLLATE pg_catalog."default",
+    organization character varying(255) COLLATE pg_catalog."default",
+    job_title character varying(255) COLLATE pg_catalog."default",
+    mobile1 character varying(20) COLLATE pg_catalog."default",
+    mobile2 character varying(20) COLLATE pg_catalog."default",
+    mobile3 character varying(20) COLLATE pg_catalog."default",
+    sendmessages1 character(1) COLLATE pg_catalog."default",
+    sendmessages2 character(1) COLLATE pg_catalog."default",
+    sendmessages3 character(1) COLLATE pg_catalog."default",
+    email1 character varying(255) COLLATE pg_catalog."default",
+    email2 character varying(255) COLLATE pg_catalog."default",
+    email3 character varying(255) COLLATE pg_catalog."default",
+    status character(1) COLLATE pg_catalog."default",
+    date_created timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    date_modified timestamp with time zone,
+    date_deleted timestamp with time zone,
+    created_by integer,
+    updated_by integer,
+    deleted_by integer,
+    validation_errors text COLLATE pg_catalog."default",
+    CONSTRAINT contacts_import_failures_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS user_qa20241013.fileattachments
+(
+    fileid serial NOT NULL,
+    campaignid integer,
+    filename character varying(255) COLLATE pg_catalog."default",
+    filepath character varying(255) COLLATE pg_catalog."default",
+    datecreated timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    datemodified timestamp with time zone,
+    datedeleted timestamp with time zone,
+    createdby integer,
+    modifiedby integer,
+    deletedby integer,
+    CONSTRAINT fileattachments_pkey PRIMARY KEY (fileid)
+);
+
+CREATE TABLE IF NOT EXISTS user_qa20241013.files
+(
+    id bigserial NOT NULL,
+    filename character varying(255) COLLATE pg_catalog."default",
+    filepath character varying(255) COLLATE pg_catalog."default",
+    filetype character varying(50) COLLATE pg_catalog."default",
+    size bigint,
+    datecreated timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    datemodified timestamp with time zone,
+    datedeleted timestamp with time zone,
+    createdby integer,
+    modifiedby integer,
+    deletedby integer,
+    CONSTRAINT files_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS user_qa20241013.mail_services
+(
+    id serial NOT NULL,
+    user_id bigint,
+    service text COLLATE pg_catalog."default",
+    host text COLLATE pg_catalog."default",
+    username text COLLATE pg_catalog."default",
+    password text COLLATE pg_catalog."default",
+    port text COLLATE pg_catalog."default",
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    email_verified_at timestamp without time zone,
+    CONSTRAINT mail_services_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS user_qa20241013.user_salutation
+(
+    id serial NOT NULL,
+    salutation character varying(100) COLLATE pg_catalog."default",
+    contact_id bigint,
+    user_id bigint,
+    created_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT user_salutation_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS user_sritech20240915.campaigns
+(
+    id bigserial NOT NULL,
+    title character varying(255) COLLATE pg_catalog."default",
+    type character varying(255) COLLATE pg_catalog."default",
+    remarks text COLLATE pg_catalog."default",
+    message text COLLATE pg_catalog."default",
+    start_date date,
+    last_notify_date date,
+    next_notify_date date,
+    status integer,
+    frequency character varying(100) COLLATE pg_catalog."default",
+    year_num integer,
+    month_num bigint[],
+    week_num bigint[],
+    day_name character varying(255)[] COLLATE pg_catalog."default",
+    date_created timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    date_modified timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    date_deleted timestamp with time zone,
+    created_by bigint,
+    updated_by bigint,
+    deleted_by bigint,
+    recurring character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    "time" time without time zone,
+    contact_type character varying(100) COLLATE pg_catalog."default",
+    contacts character varying[] COLLATE pg_catalog."default",
+    cc character varying[] COLLATE pg_catalog."default",
+    bcc character varying[] COLLATE pg_catalog."default",
+    subject character varying(100) COLLATE pg_catalog."default",
+    is_group smallint,
+    is_resume smallint,
+    day_num integer,
+    last_trigger timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    trigger_count integer DEFAULT 0,
+    end_date date,
+    CONSTRAINT campaigns_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS user_sritech20240915.campaigns_import_failures
+(
+    id serial NOT NULL,
+    created_by bigint NOT NULL,
+    title character varying(255) COLLATE pg_catalog."default",
+    type character varying(255) COLLATE pg_catalog."default",
+    remarks text COLLATE pg_catalog."default",
+    message text COLLATE pg_catalog."default",
+    start_date date,
+    status integer,
+    frequency character varying(100) COLLATE pg_catalog."default",
+    year_num integer,
+    month_num bigint[],
+    week_num bigint[],
+    day_num bigint[],
+    day_name character varying(255)[] COLLATE pg_catalog."default",
+    recurring character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    contact_type character varying(100) COLLATE pg_catalog."default",
+    contacts character varying[] COLLATE pg_catalog."default",
+    cc character varying[] COLLATE pg_catalog."default",
+    bcc character varying[] COLLATE pg_catalog."default",
+    subject character varying(100) COLLATE pg_catalog."default",
+    is_group smallint,
+    validation_errors text COLLATE pg_catalog."default" NOT NULL,
+    date_created timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT campaigns_import_failures_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS user_sritech20240915.campaignstatuslogs
+(
+    logid serial NOT NULL,
+    campaignid integer,
+    actiondate timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    actionstatus character varying(20) COLLATE pg_catalog."default",
+    comment text COLLATE pg_catalog."default",
+    CONSTRAINT campaignstatuslogs_pkey PRIMARY KEY (logid)
+);
+
+CREATE TABLE IF NOT EXISTS user_sritech20240915.contacts
+(
+    id serial NOT NULL,
+    name character varying(255) COLLATE pg_catalog."default",
+    type character varying(50) COLLATE pg_catalog."default",
+    salutation character varying(255) COLLATE pg_catalog."default",
+    organization character varying(255) COLLATE pg_catalog."default",
+    job_title character varying(255) COLLATE pg_catalog."default",
+    mobile1 character varying(20) COLLATE pg_catalog."default",
+    mobile2 character varying(20) COLLATE pg_catalog."default",
+    mobile3 character varying(20) COLLATE pg_catalog."default",
+    sendmessages1 character(1) COLLATE pg_catalog."default",
+    sendmessages2 character(1) COLLATE pg_catalog."default",
+    sendmessages3 character(1) COLLATE pg_catalog."default",
+    email1 character varying(255) COLLATE pg_catalog."default",
+    email2 character varying(255) COLLATE pg_catalog."default",
+    email3 character varying(255) COLLATE pg_catalog."default",
+    status character(1) COLLATE pg_catalog."default",
+    date_created timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    date_modified timestamp with time zone,
+    date_deleted timestamp with time zone,
+    created_by integer,
+    updated_by integer,
+    deleted_by integer,
+    CONSTRAINT contacts_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS user_sritech20240915.contacts_import_failures
+(
+    id serial NOT NULL,
+    name character varying(255) COLLATE pg_catalog."default",
+    type character varying(50) COLLATE pg_catalog."default",
+    salutation character varying(255) COLLATE pg_catalog."default",
+    organization character varying(255) COLLATE pg_catalog."default",
+    job_title character varying(255) COLLATE pg_catalog."default",
+    mobile1 character varying(20) COLLATE pg_catalog."default",
+    mobile2 character varying(20) COLLATE pg_catalog."default",
+    mobile3 character varying(20) COLLATE pg_catalog."default",
+    sendmessages1 character(1) COLLATE pg_catalog."default",
+    sendmessages2 character(1) COLLATE pg_catalog."default",
+    sendmessages3 character(1) COLLATE pg_catalog."default",
+    email1 character varying(255) COLLATE pg_catalog."default",
+    email2 character varying(255) COLLATE pg_catalog."default",
+    email3 character varying(255) COLLATE pg_catalog."default",
+    status character(1) COLLATE pg_catalog."default",
+    date_created timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    date_modified timestamp with time zone,
+    date_deleted timestamp with time zone,
+    created_by integer,
+    updated_by integer,
+    deleted_by integer,
+    validation_errors text COLLATE pg_catalog."default",
+    CONSTRAINT contacts_import_failures_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS user_sritech20240915.fileattachments
+(
+    fileid serial NOT NULL,
+    campaignid integer,
+    filename character varying(255) COLLATE pg_catalog."default",
+    filepath character varying(255) COLLATE pg_catalog."default",
+    datecreated timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    datemodified timestamp with time zone,
+    datedeleted timestamp with time zone,
+    createdby integer,
+    modifiedby integer,
+    deletedby integer,
+    CONSTRAINT fileattachments_pkey PRIMARY KEY (fileid)
+);
+
+CREATE TABLE IF NOT EXISTS user_sritech20240915.files
+(
+    id bigserial NOT NULL,
+    filename character varying(255) COLLATE pg_catalog."default",
+    filepath character varying(255) COLLATE pg_catalog."default",
+    filetype character varying(50) COLLATE pg_catalog."default",
+    size bigint,
+    datecreated timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    datemodified timestamp with time zone,
+    datedeleted timestamp with time zone,
+    createdby integer,
+    modifiedby integer,
+    deletedby integer,
+    CONSTRAINT files_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS user_sritech20240915.mail_services
+(
+    id serial NOT NULL,
+    user_id bigint,
+    service text COLLATE pg_catalog."default",
+    host text COLLATE pg_catalog."default",
+    username text COLLATE pg_catalog."default",
+    password text COLLATE pg_catalog."default",
+    port text COLLATE pg_catalog."default",
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    email_verified_at timestamp without time zone,
+    CONSTRAINT mail_services_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS user_sritech20240915.user_salutation
+(
+    id serial NOT NULL,
+    salutation character varying(100) COLLATE pg_catalog."default",
+    contact_id bigint,
+    user_id bigint,
+    created_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT user_salutation_pkey PRIMARY KEY (id)
+);
+
+ALTER TABLE IF EXISTS public.contacts
+    ADD CONSTRAINT contacts_createdby_fkey FOREIGN KEY (created_by)
+    REFERENCES public.users (userid) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
+
+
+ALTER TABLE IF EXISTS public.contacts
+    ADD CONSTRAINT contacts_deletedby_fkey FOREIGN KEY (deleted_by)
+    REFERENCES public.users (userid) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
+
+
+ALTER TABLE IF EXISTS public.contacts
+    ADD CONSTRAINT contacts_updatedby_fkey FOREIGN KEY (updated_by)
+    REFERENCES public.users (userid) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
+
+
+ALTER TABLE IF EXISTS public.fileattachments
+    ADD CONSTRAINT fileattachments_campaignid_fkey FOREIGN KEY (campaignid)
+    REFERENCES public.campaigns (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.fileattachments
+    ADD CONSTRAINT fileattachments_createdby_fkey FOREIGN KEY (createdby)
+    REFERENCES public.users (userid) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
+
+
+ALTER TABLE IF EXISTS public.fileattachments
+    ADD CONSTRAINT fileattachments_deletedby_fkey FOREIGN KEY (deletedby)
+    REFERENCES public.users (userid) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
+
+
+ALTER TABLE IF EXISTS public.fileattachments
+    ADD CONSTRAINT fileattachments_updatedby_fkey FOREIGN KEY (updatedby)
+    REFERENCES public.users (userid) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
+
+
+ALTER TABLE IF EXISTS public.users
+    ADD CONSTRAINT users_createdby_fkey FOREIGN KEY (createdby)
+    REFERENCES public.users (userid) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
+
+
+ALTER TABLE IF EXISTS public.users
+    ADD CONSTRAINT users_deletedby_fkey FOREIGN KEY (deletedby)
+    REFERENCES public.users (userid) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
+
+
+ALTER TABLE IF EXISTS public.users
+    ADD CONSTRAINT users_updatedby_fkey FOREIGN KEY (updatedby)
+    REFERENCES public.users (userid) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
+
+
+ALTER TABLE IF EXISTS user_qa20241013.user_salutation
+    ADD CONSTRAINT fk_contact_id FOREIGN KEY (contact_id)
+    REFERENCES user_qa20241013.contacts (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE CASCADE;
+
+
+ALTER TABLE IF EXISTS user_qa20241013.user_salutation
+    ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id)
+    REFERENCES public.users (userid) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE CASCADE;
+
+
+ALTER TABLE IF EXISTS user_sritech20240915.user_salutation
+    ADD CONSTRAINT fk_contact_id FOREIGN KEY (contact_id)
+    REFERENCES user_sritech20240915.contacts (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE CASCADE;
+
+
+ALTER TABLE IF EXISTS user_sritech20240915.user_salutation
+    ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id)
+    REFERENCES public.users (userid) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE CASCADE;
+
+END;
