@@ -1,9 +1,19 @@
 const pool = require('../config/db');
+const PGSDB = require('../library/pgsdb'); // Import the class
+const db = new PGSDB(); // Create instance
 
 const LeaveBalance = {
   async getAllLeaveData() {
-    const query = 'SELECT * FROM leave_balance';
-    return pool.query(query);
+
+
+    const res = await db.raw('SELECT * FROM leave_balance_new');
+    return res;
+
+
+
+
+    // const query = 'SELECT * FROM leave_balance';
+    // return pool.query(query);
   },
 
   async updateLeaveData(user_id, leaveData) {

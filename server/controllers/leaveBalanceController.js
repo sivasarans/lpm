@@ -2,9 +2,13 @@ const LeaveBalance = require('../model/leaveBalanceModel');
 
 const leaveBalanceController = {
   async getAllLeaveData(req, res) {
+
+
     try {
       const result = await LeaveBalance.getAllLeaveData();
-      res.json(result.rows);
+      // res.json(result.rows);
+      res.status(200).send(result); // ❌ Returns full PG result object
+
     } catch (err) {
       console.error(err);
       res.status(500).send('Error fetching leave data');

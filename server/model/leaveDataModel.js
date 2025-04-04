@@ -187,9 +187,127 @@ const LeaveData = {
         //  availableLeaveResult 
         };
   },
+// -----------works well but used AI to handle step by step ( if fails the step use, below)
+//   async updateLeaveStatus(id, status, remarks, approved_by) {
+//     const query = `
+//       UPDATE leave_applications 
+//       SET 
+//         status = $1, 
+//         remarks = COALESCE($2, 'default-x'), 
+//         approved_by = $3,
+//         approved_date = CASE WHEN LOWER($1) = 'approved' THEN NOW() ELSE approved_date END
+//       WHERE id = $4 
+//       RETURNING *`;
+  
+//     const result = await db.raw(query, [status, remarks, approved_by, id]);
+//     console.log('Update Result for leave application status:', result); // Debug log
 
-  async updateLeaveStatus(id, status, remarks, approved_by) {
-    const query = `
+
+// //============================ trial to reduce leave balance =============================
+// if (status.toLowerCase() === 'approved') {
+//   const leaveRequest = result[0];
+
+//   console.log('Update Result for leave application status:', leaveRequest);
+
+//   if (!leaveRequest) {
+//     console.error('No leave request found, skipping balance update.');
+//     return;
+//   }
+
+//   const leaveBalanceQuery = `
+//     UPDATE public.leave_balance_new
+//     SET 
+//       l_availed = l_availed + $1, -- Reduce the available leave
+//       last_modified = NOW() 
+//     WHERE userid = $2 
+//       AND l_type_id = $3
+//       AND l_available >= $1 -- Ensure enough leave balance
+//     RETURNING *`;
+
+//   console.log('Executing query to update leave balance:', leaveBalanceQuery);
+//   console.log('Query parameters:', leaveRequest.leave_days, leaveRequest.user_id, leaveRequest.leave_type);
+
+//   const balanceUpdateResult = await db.raw(leaveBalanceQuery, [
+//     leaveRequest.leave_days, 
+//     leaveRequest.user_id, 
+//     leaveRequest.leave_type
+//   ]);
+
+//   console.log('Updated leave balance result:', balanceUpdateResult);
+
+//   if (!balanceUpdateResult || balanceUpdateResult.length === 0) {
+//     console.error('Leave balance update failed! Check if user_id and l_type_id exist.');
+//   }
+// }
+
+
+// //============================ trial to reduce leave balance =============================
+
+
+//     return result;
+//   }
+
+
+async updateLeaveStatus(id, status, remarks, approved_by) {
+  try {
+    if (status.toLowerCase() === 'approved') {
+      // Step 1: Fetch leave request details
+      const leaveRequestQuery = `SELECT * FROM leave_applications WHERE id = $1`;
+      const leaveRequestResult = await db.raw(leaveRequestQuery, [id]);
+
+      const leaveRequest = leaveRequestResult[0];
+      console.log('Fetched Leave Request:', leaveRequest);
+
+      if (!leaveRequest) {
+        console.error('No leave request found, skipping balance update.');
+        return;
+      }
+
+      // Step 2: Check leave balance availability
+      const checkBalanceQuery = `
+        SELECT l_available FROM public.leave_balance_new 
+        WHERE userid = $1 AND l_type_id = $2
+      `;
+      const balanceResult = await db.raw(checkBalanceQuery, [
+        leaveRequest.user_id,
+        leaveRequest.leave_type
+      ]);
+
+      const leaveBalance = balanceResult[0]?.l_available || 0;
+      console.log('Current Leave Balance:', leaveBalance);
+
+      if (leaveBalance < leaveRequest.leave_days) {
+        console.error('Insufficient leave balance! Cannot approve leave.');
+        return;
+      }
+
+      // Step 3: Reduce leave balance
+      const leaveBalanceQuery = `
+        UPDATE public.leave_balance_new
+        SET 
+          l_availed = l_availed + $1, 
+          last_modified = NOW() 
+        WHERE userid = $2 
+          AND l_type_id = $3
+        RETURNING *`;
+
+      console.log('Executing leave balance update query...');
+      const balanceUpdateResult = await db.raw(leaveBalanceQuery, [
+        leaveRequest.leave_days, 
+        leaveRequest.user_id, 
+        leaveRequest.leave_type
+      ]);
+
+      console.log('Updated Leave Balance Result:', balanceUpdateResult);
+
+      if (!balanceUpdateResult || balanceUpdateResult.length === 0) {
+        console.error('Leave balance update failed! Skipping status update.');
+        return;
+      }
+    }
+
+    // Step 4: Update leave application status
+    const updateStatusQuery = `
       UPDATE leave_applications 
       SET 
         status = $1, 
@@ -198,11 +316,18 @@ const LeaveData = {
         approved_date = CASE WHEN LOWER($1) = 'approved' THEN NOW() ELSE approved_date END
       WHERE id = $4 
       RETURNING *`;
-  
-    const result = await db.raw(query, [status, remarks, approved_by, id]);
-    // console.log('Update Result:', result[0]); // Debug log
+
+    const result = await db.raw(updateStatusQuery, [status, remarks, approved_by, id]);
+    console.log('Final Leave Application Update Result:', result);
+
     return result;
+  } catch (error) {
+    console.error('Error updating leave status:', error);
   }
+}
+
+
+
   
   
 ,  

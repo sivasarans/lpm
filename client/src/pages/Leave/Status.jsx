@@ -168,7 +168,7 @@ function LeaveStatus() {
                   <>
                     {isAdminMode && record.status === 'Pending' ? (
                       <>
-                        <IconButton
+                        {/* <IconButton
                           onClick={() => {
                             // console.log('Approved by:', userData.name || 'N/A');
 
@@ -185,9 +185,30 @@ function LeaveStatus() {
                           aria-label="approve"
                         >
                           <CheckIcon />
-                        </IconButton>
-                        {/* Approval Icon */}
+                        </IconButton> */}
                         <IconButton
+  onClick={() => {
+    const updateData = {
+      requestId: record.id,
+      newStatus: 'Approved',
+      approved_by_name: userData.name || 'N/A',
+      leave_days: record.leave_days, // Extra field
+      leave_type: record.leave_type, // Extra field
+      user_id: record.user_id, // Extra field
+    };
+
+    console.log("Updating Leave Status with:", updateData);
+
+    dispatch(updateLeaveStatus(updateData));
+  }}
+  color="primary"
+  aria-label="approve"
+>
+  <CheckIcon />
+</IconButton>
+
+                        {/* Approval Icon */}
+                        {/* <IconButton
                           onClick={() => {
                             const reason = window.prompt('Enter the reason for rejecting this leave request:');
                             if (reason) {
@@ -208,7 +229,34 @@ function LeaveStatus() {
                           aria-label="reject"
                         >
                           <CloseIcon />
-                        </IconButton>
+                        </IconButton> */}
+
+<IconButton
+  onClick={() => {
+    const reason = window.prompt('Enter the reason for rejecting this leave request:');
+    if (reason) {
+      const updateData = {
+        requestId: record.id,
+        newStatus: 'Rejected',
+        remarks_1: reason,
+        leave_days: record.leave_days, // Extra field
+        leave_type: record.leave_type, // Extra field
+        user_id: record.user_id, // Extra field
+      };
+
+      console.log("Rejecting Leave Status with:", updateData);
+
+      dispatch(updateLeaveStatus(updateData));
+    } else {
+      alert('Rejection reason is required!');
+    }
+  }}
+  color="secondary"
+  aria-label="reject"
+>
+  <CloseIcon />
+</IconButton>
+
                         {/* Rejection Icon */}
                       </>
                     ) : (

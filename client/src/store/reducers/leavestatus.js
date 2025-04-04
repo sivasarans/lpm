@@ -76,11 +76,22 @@ export const applyLeave = createAsyncThunk(
         console.log(`----------${key}: ${value}`);
       }
 
+      const userSession = JSON.parse(sessionStorage.getItem("user")); // Retrieve user data
+      console.log("User Session:", userSession); // Debugging
+      
+      const userToken = userSession?.token; // Extract token
+      console.log("User Token:", userToken); // Debugging
+
       // if (!leaveRequest.get('leave_type')) {
       //   throw new Error("Leave type is required");
       // }
       // console.log("Dispatching applyLeave with leave_type:", leaveRequest.get('leave_type'));
-      const response = await axios.post('http://localhost:3700/leave/apply_leave', leaveRequest);
+      const response = await axios.post('http://localhost:3700/leave/apply_leave', leaveRequest, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${userToken}`, // Send token for authentication
+        },
+      });
       // if (response.status === 200 || response.status === 201) {
 
       //   console.log( "temporary leave apply time, reduce leave balance is paused in store->reducers->leavestatus line 86")
