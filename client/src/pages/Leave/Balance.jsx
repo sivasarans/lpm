@@ -26,7 +26,15 @@ const LeaveBalanceCount = () => {
   const [showAll, setShowAll] = useState(false);
 
   const userData = useSelector((state) => state.leavestatus.userData) || { user_id: "2" };
-  const leaveBalance_all_users = useSelector((state) => state.leavestatus.leaveBalance_all_users);
+  // const leaveBalance_all_users = useSelector((state) => state.leavestatus.leaveBalance_all_users);
+
+
+  const leaveBalance_all_users = useSelector(
+    (state) => state.leavestatus.leaveBalance_all_users || []
+  );
+  console.log("leaveBalance_all_users( ( testing )):", leaveBalance_all_users);
+
+  
   const dispatch = useDispatch();
 
   useEffect(() => {

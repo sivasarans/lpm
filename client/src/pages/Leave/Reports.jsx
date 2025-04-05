@@ -9,7 +9,7 @@ const LeaveReports = () => {
 
   const handleDownload = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/download-leave-requests?format=${fileFormat}&query=${encodeURIComponent(query)}`, { responseType: 'blob' });
+      const response = await axios.get(`http://localhost:3700/download-leave-requests?format=${fileFormat}&query=${encodeURIComponent(query)}`, { responseType: 'blob' });
       const fileExtension = fileFormat === "excel" ? ".xlsx" : fileFormat === "csv" ? ".csv" : ".pdf";
       const blob = new Blob([response.data], { type: 'application/octet-stream' });
       const link = document.createElement('a');

@@ -41,19 +41,20 @@ app.use('/api/v1/users', require('./routes/subAdmin'));
 //   res.send("hello");
 // });
 app.use('/api/v1/contacts', require('./routes/contacts'));
+app.use('/leave', require('./routes/leaveData'));
 
-app.use('/download-leave-requests', require('./routes/reports'));
 app.use('/login', require('./routes/login'));
 app.use('/attandance', require('./routes/attandance'));
-app.use('/add_user', require('./routes/adduser'));
-app.use('/leave', require('./routes/leaveData'));
-app.use('/', require('./routes/leave_balance')); // Updated route path
+// app.use('/add_user', require('./routes/adduser'));
+// app.use('/', require('./routes/leave_balance')); // Updated route path
 
-app.use('/permission', require('./routes/permission'));
-app.use('/holidays', require('./routes/holidays'));
+// app.use('/holidays', require('./routes/holidays'));
 
-app.use('/leave-s', require('./routes/sample_test'));
+// app.use('/leave-s', require('./routes/sample_test'));
 app.use('/calender', require('./routes/calender'));
+app.use('/permission', require('./routes/permission'));
+
+app.use('/download-leave-requests', require('./routes/reports'));
 
 
 

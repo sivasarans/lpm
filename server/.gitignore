@@ -4,6 +4,7 @@
 /node_modules
 /logs
 /uploads
+/config/db1.js
 
 /.pnp
 .pnp.js

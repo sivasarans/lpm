@@ -1,12 +1,12 @@
 const Attendance = require('../model/attendanceModel');
-const pool = require('../config/db');
 
 const attendanceController = {
   async getAllUsers(req, res) {
     try {
       const result = await Attendance.getAllUsers();
-      if (result.rows.length > 0) {
-        res.status(200).json({ success: true, users: result.rows });
+      const rows = result.rows || result; // in case db.raw returns just array
+      if (rows.length > 0) {
+        res.status(200).json({ success: true, users: rows });
       } else {
         res.status(404).json({ success: false, message: 'No users found.' });
       }
@@ -17,19 +17,16 @@ const attendanceController = {
   },
 
   async bulkUpdateAttendance(req, res) {
-    const attendanceData = req.body; // Array of attendance records
-    console.log('Bulk Update Data:', attendanceData);
+    const attendanceData = req.body;
 
     if (!Array.isArray(attendanceData) || attendanceData.length === 0) {
-      return res
-        .status(400)
-        .json({ success: false, message: 'Attendance data must be a non-empty array.' });
+      return res.status(400).json({
+        success: false,
+        message: 'Attendance data must be a non-empty array.',
+      });
     }
 
-    const client = await pool.connect(); // Use a transaction for bulk updates
     try {
-      await client.query('BEGIN'); // Start transaction
-
       for (const record of attendanceData) {
         const { userId, name, date, inTime, outTime } = record;
 
@@ -37,47 +34,64 @@ const attendanceController = {
           throw new Error('Invalid attendance data.');
         }
 
-        // Check if attendance already exists
         const result = await Attendance.getAttendanceByUserAndDate(userId, date);
+        const rows = result.rows || result;
 
-        if (result.rows.length > 0) {
-          // Update existing attendance
-          await Attendance.updateAttendance(userId, date, inTime || '09:30:00', outTime || '17:00:00');
+        if (rows.length > 0) {
+          await Attendance.updateAttendance(
+            userId,
+            date,
+            inTime || '09:30:00',
+            outTime || '17:00:00'
+          );
         } else {
-          // Insert new attendance record
-          await Attendance.insertAttendance(userId, name, date, inTime || '09:30:00', outTime || '17:00:00');
+          await Attendance.insertAttendance(
+            userId,
+            name,
+            date,
+            inTime || '09:30:00',
+            outTime || '17:00:00'
+          );
         }
       }
 
-      await client.query('COMMIT'); // Commit transaction
-      res.status(200).json({ success: true, message: 'Attendance updated successfully.' });
+      res.status(200).json({
+        success: true,
+        message: 'Attendance updated successfully.',
+      });
     } catch (err) {
-      await client.query('ROLLBACK'); // Rollback transaction on error
       console.error('Error in bulk update:', err);
-      res.status(500).json({ success: false, message: 'Error updating attendance.' });
-    } finally {
-      client.release(); // Release client back to the pool
+      res.status(500).json({
+        success: false,
+        message: 'Error updating attendance.',
+      });
     }
   },
 
   async getAttendanceByDate(req, res) {
-    const date = req.method === 'GET' ? req.query.date : req.body.date; // Handle both GET and POST
-    console.log("Received date:", date);
+    const date = req.method === 'GET' ? req.query.date : req.body.date;
 
     if (!date) {
-      return res.status(400).json({ success: false, message: 'Date is required.' });
+      return res
+        .status(400)
+        .json({ success: false, message: 'Date is required.' });
     }
 
     try {
       const result = await Attendance.getAttendanceByDate(date);
-      if (result.rows.length > 0) {
-        res.status(200).json({ success: true, attendance_date: result.rows });
+      const rows = result.rows || result;
+      if (rows.length > 0) {
+        res.status(200).json({ success: true, attendance_date: rows });
       } else {
-        res.status(404).json({ success: false, message: 'No data found for this date.' });
+        res
+          .status(404)
+          .json({ success: false, message: 'No data found for this date.' });
       }
     } catch (err) {
       console.error('Error fetching attendance:', err);
-      res.status(500).json({ success: false, message: 'Error fetching attendance.' });
+      res
+        .status(500)
+        .json({ success: false, message: 'Error fetching attendance.' });
     }
   },
 };

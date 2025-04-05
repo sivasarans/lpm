@@ -6,7 +6,20 @@ const auth = require('../middleware/auth');
 
 
 router.get('/',auth.verifyToken, leaveDataController.getAllLeaveData);
-router.put('/admin/:user_id',auth.verifyToken, leaveDataController.updateLeaveData);
+
+router.get('/get-all-leave-balance/all-users',leaveDataController.getAllLeaveBalance);
+
+router.put('/admin/:user_id',
+    // auth.verifyToken,
+     leaveDataController.updateLeaveData);
+router.put('/leave-configuration',
+    leaveDataController.updateConfiguration
+);
+router.get('/leave-configuration',
+    leaveDataController.getConfiguration
+);
+
+
 router.post('/apply_leave', img(['uploads/users_leave_documents', 'timestamp', 'file']), auth.verifyToken,leaveDataController.applyLeave);
 
 // router.post(

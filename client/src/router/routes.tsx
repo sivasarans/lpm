@@ -34,6 +34,8 @@ const LeaveReports = lazy(() => import('../pages/Leave/Reports'));
 const LeaveCalender = lazy(() => import('../pages/Leave/Calendar'));
 const LeaveCalenderBeta = lazy(() => import('../pages/Leave/CalendarBeta'));
 const LeaveAssign = lazy(() => import('../pages/Leave/Assign'));
+const LeaveConfiguration = lazy(() => import('../pages/Leave/Configuration'));
+
 
 const PermissionApply = lazy(() => import('../pages/Permission/Apply'));
 const PermissionStatus = lazy(() => import('../pages/Permission/Status'));
@@ -130,6 +132,10 @@ const routes = [
     {
         path: '/leave/assign',
         element: <LeaveAssign />,
+    },
+    {
+        path: '/leave/configuration',
+        element: <LeaveConfiguration />,
     },
     {
         path: '/Permission/apply',

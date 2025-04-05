@@ -1,6 +1,9 @@
 const LeaveData = require('../model/leaveDataModel');
 
 const leaveDataController = {
+
+
+  
   async getAllLeaveData(req, res) {
     try {
       const result = await LeaveData.getAllLeaveData();
@@ -12,6 +15,66 @@ const leaveDataController = {
       res.status(500).send('Error fetching leave data');
     }
   },
+  async getAllLeaveBalance(req, res) {
+
+
+    try {
+      const result = await LeaveData.getAllLeaveBalance();
+      // res.json(result.rows);
+      res.status(200).send(result); // ❌ Returns full PG result object
+
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Error fetching leave data');
+    }
+  },
+  async getConfiguration(req, res) {
+    try {
+      const result = await LeaveData.getConfiguration();
+      res.status(200).send(result); // ❌ Returns full PG result object
+
+      // res.json(result.rows);
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Error fetching leave data');
+    }
+  },
+
+    async updateConfiguration(req, res) {
+      const { role_name, leave_type_id, leave_settings } = req.body;
+      console.log('📝 Leave configuration update:', req.body);
+  
+      if (!role_name || !leave_type_id || leave_settings === undefined) {
+        return res.status(400).json({
+          success: false,
+          message: 'All fields (role_name, leave_type_id, leave_settings) are required'
+        });
+      }
+  
+      try {
+        const result = await LeaveData.updateConfiguration(role_name, leave_type_id, leave_settings);
+        
+        if (!result.success) {
+          return res.status(400).json(result);
+        }
+  
+        res.status(200).json({
+          success: true,
+          message: 'Leave configuration updated successfully',
+          data: result.data
+        });
+      } catch (error) {
+        console.error('Error updating configuration:', error);
+        res.status(500).json({
+          success: false,
+          message: 'Internal server error',
+          error: error.message
+        });
+      }
+    },
+  
+    // ... rest of your existing controller methods ...
+  
 
   async updateLeaveData(req, res) {
     const { user_id } = req.params;

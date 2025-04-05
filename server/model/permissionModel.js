@@ -1,4 +1,4 @@
-const pool = require('../config/db');
+// const pool = require('../config/db');
 const PGSDB = require('../library/pgsdb'); // Import the class
 const db = new PGSDB(); // Create instance
 

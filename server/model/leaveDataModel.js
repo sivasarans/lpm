@@ -1,12 +1,6 @@
-const pool = require('../config/db');
-// const db = require("../config/postgresql")
 const PGSDB = require('../library/pgsdb'); // Import the class
 const db = new PGSDB(); // Create instance
 const nodemailer = require('nodemailer');
-
-
-
-
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -22,44 +16,69 @@ const LeaveData = {
     return res;
   },
 
+  async getAllLeaveBalance() {
+    const res = await db.raw('SELECT * FROM leave_balance_new');
+    return res;
+  },
+
+  async getConfiguration() {
+    const res = await db.raw('SELECT * FROM leave_settings_new');    // console.log('Raw query result:', res); // Should show data
+    return res;
+  },
+
   async getAllLeaveData() { 
 
     const res = await db.raw('SELECT * FROM leave_data');
     return res;
   },
+ 
+  
 
-  async updateLeaveData(user_id, leaveData) {
-    const query = `
-      UPDATE leave_data SET EL = $1, SL = $2, CL = $3, CO = $4, SO = $5, SML = $6, 
-      ML = $7, CW = $8, OOD = $9, HL = $10, COL = $11, WFH = $12, WO = $13, MP = $14, A = $15
-      WHERE user_id = $16 RETURNING *`;
-    const values = [
-      leaveData.EL, leaveData.SL, leaveData.CL, leaveData.CO, leaveData.SO, leaveData.SML,
-      leaveData.ML, leaveData.CW, leaveData.OOD, leaveData.HL, leaveData.COL, leaveData.WFH,
-      leaveData.WO, leaveData.MP, leaveData.A, user_id
-    ];
-    return pool.query(query, values);
-  },
-  // --------------------use this if apply fails --------------------
-  // async applyLeave(leaveApplication) {
+    async updateConfiguration(role_name, leave_type_id, leave_settings) {
+      const query = `
+        UPDATE leave_settings_new 
+        SET leave_settings = $1 
+        WHERE role_name = $2 
+        AND leave_type_id = $3
+        RETURNING *`;
+      
+      try {
+        const result = await db.raw(query, [
+          leave_settings,
+          role_name,
+          leave_type_id
+        ]);
+        
+        return {
+          success: true,
+          message: 'Configuration updated successfully',
+          data: result.rows
+        };
+      } catch (error) {
+        console.error('Error updating leave configuration:', error);
+        return {
+          success: false,
+          message: 'Failed to update configuration',
+          error: error.message
+        };
+      }
+    },
+  
+    // ... rest of your existing model methods ...
+  
+  
+  // async updateLeaveData(user_id, leaveData) {
   //   const query = `
-  //     INSERT INTO leave_applications 
-  //       (user_id, user_name, leave_type, from_date, to_date, 
-  //        leave_days, reason, file, status)
-  //     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'Pending')
-  //     RETURNING *`;
-    
+  //     UPDATE leave_data SET EL = $1, SL = $2, CL = $3, CO = $4, SO = $5, SML = $6, 
+  //     ML = $7, CW = $8, OOD = $9, HL = $10, COL = $11, WFH = $12, WO = $13, MP = $14, A = $15
+  //     WHERE user_id = $16 RETURNING *`;
   //   const values = [
-  //     leaveApplication.user_id, leaveApplication.user_name,
-  //     leaveApplication.leave_type, leaveApplication.from_date,
-  //     leaveApplication.to_date, leaveApplication.leave_days,
-  //     leaveApplication.reason, leaveApplication.file
+  //     leaveData.EL, leaveData.SL, leaveData.CL, leaveData.CO, leaveData.SO, leaveData.SML,
+  //     leaveData.ML, leaveData.CW, leaveData.OOD, leaveData.HL, leaveData.COL, leaveData.WFH,
+  //     leaveData.WO, leaveData.MP, leaveData.A, user_id
   //   ];
-    
-  //   return db.raw(query, values);
+  //   return pool.query(query, values);
   // },
-
-
   
   async applyLeave(leaveApplication) {
     const query = `
@@ -154,9 +173,6 @@ const LeaveData = {
         </div>
       `
     };
-    
-      
-  
       // Send email notification
       await transporter.sendMail(mailOptions);
       console.log('Leave application submitted and notification sent');
@@ -168,85 +184,17 @@ const LeaveData = {
     }
   },
 
-  async reduceLeaveBalance(user_id, leave_type, leave_days) {
-    const updateLeaveDataQuery = `
-      UPDATE leave_balance
-      SET ${leave_type.toLowerCase()}_availed = ${leave_type.toLowerCase()}_availed + $1
-      WHERE user_id = $2
-      RETURNING ${leave_type.toLowerCase()}_availed`;
-    const leaveDataResult = await pool.query(updateLeaveDataQuery, [leave_days, user_id]);
-
-    // const updateAvailableLeaveQuery = `
-    //   UPDATE leave_balance
-    //   SET ${leave_type.toLowerCase()}_available = ${leave_type.toLowerCase()}_available - $1
-    //   WHERE user_id = $2
-    //   RETURNING ${leave_type.toLowerCase()}_available`;
-    // const availableLeaveResult = await pool.query(updateAvailableLeaveQuery, [leave_days, user_id]);
-
-    return { leaveDataResult,
-        //  availableLeaveResult 
-        };
-  },
-// -----------works well but used AI to handle step by step ( if fails the step use, below)
-//   async updateLeaveStatus(id, status, remarks, approved_by) {
-//     const query = `
-//       UPDATE leave_applications 
-//       SET 
-//         status = $1, 
-//         remarks = COALESCE($2, 'default-x'), 
-//         approved_by = $3,
-//         approved_date = CASE WHEN LOWER($1) = 'approved' THEN NOW() ELSE approved_date END
-//       WHERE id = $4 
-//       RETURNING *`;
-  
-//     const result = await db.raw(query, [status, remarks, approved_by, id]);
-//     console.log('Update Result for leave application status:', result); // Debug log
-
-
-// //============================ trial to reduce leave balance =============================
-// if (status.toLowerCase() === 'approved') {
-//   const leaveRequest = result[0];
-
-//   console.log('Update Result for leave application status:', leaveRequest);
-
-//   if (!leaveRequest) {
-//     console.error('No leave request found, skipping balance update.');
-//     return;
-//   }
-
-//   const leaveBalanceQuery = `
-//     UPDATE public.leave_balance_new
-//     SET 
-//       l_availed = l_availed + $1, -- Reduce the available leave
-//       last_modified = NOW() 
-//     WHERE userid = $2 
-//       AND l_type_id = $3
-//       AND l_available >= $1 -- Ensure enough leave balance
-//     RETURNING *`;
-
-//   console.log('Executing query to update leave balance:', leaveBalanceQuery);
-//   console.log('Query parameters:', leaveRequest.leave_days, leaveRequest.user_id, leaveRequest.leave_type);
-
-//   const balanceUpdateResult = await db.raw(leaveBalanceQuery, [
-//     leaveRequest.leave_days, 
-//     leaveRequest.user_id, 
-//     leaveRequest.leave_type
-//   ]);
-
-//   console.log('Updated leave balance result:', balanceUpdateResult);
-
-//   if (!balanceUpdateResult || balanceUpdateResult.length === 0) {
-//     console.error('Leave balance update failed! Check if user_id and l_type_id exist.');
-//   }
-// }
-
-
-// //============================ trial to reduce leave balance =============================
-
-
-//     return result;
-//   }
-
+  // async reduceLeaveBalance(user_id, leave_type, leave_days) {
+  //   const updateLeaveDataQuery = `
+  //     UPDATE leave_balance
+  //     SET ${leave_type.toLowerCase()}_availed = ${leave_type.toLowerCase()}_availed + $1
+  //     WHERE user_id = $2
+  //     RETURNING ${leave_type.toLowerCase()}_availed`;
+  //   const leaveDataResult = await pool.query(updateLeaveDataQuery, [leave_days, user_id]);
+  //   return { leaveDataResult,
+  //       //  availableLeaveResult 
+  //       };
+  // },
 
 async updateLeaveStatus(id, status, remarks, approved_by) {
   try {
@@ -325,30 +273,24 @@ async updateLeaveStatus(id, status, remarks, approved_by) {
     console.error('Error updating leave status:', error);
   }
 }
-
-
-
-  
-  
 ,  
-  async updateLeaveBalance(user_id, leave_type, leave_days, action) {
-    const updateLeaveDataQuery = `
-      UPDATE leave_balance
-      SET ${leave_type.toLowerCase()}_availed = ${leave_type.toLowerCase()}_availed ${action} $1
-      WHERE user_id = $2`;
-    await pool.query(updateLeaveDataQuery, [leave_days, user_id]);
+  // async updateLeaveBalance(user_id, leave_type, leave_days, action) {
+  //   const updateLeaveDataQuery = `
+  //     UPDATE leave_balance
+  //     SET ${leave_type.toLowerCase()}_availed = ${leave_type.toLowerCase()}_availed ${action} $1
+  //     WHERE user_id = $2`;
+  //   await pool.query(updateLeaveDataQuery, [leave_days, user_id]);
 
-    const updateAvailableLeaveQuery = `
-      UPDATE leave_balance
-      SET ${leave_type.toLowerCase()}_available = ${leave_type.toLowerCase()}_available ${action === '+' ? '-' : '+'} $1
-      WHERE user_id = $2`;
-    await pool.query(updateAvailableLeaveQuery, [leave_days, user_id]);
-  },
+  //   const updateAvailableLeaveQuery = `
+  //     UPDATE leave_balance
+  //     SET ${leave_type.toLowerCase()}_available = ${leave_type.toLowerCase()}_available ${action === '+' ? '-' : '+'} $1
+  //     WHERE user_id = $2`;
+  //   await pool.query(updateAvailableLeaveQuery, [leave_days, user_id]);
+  // },
 
   async deleteLeaveApplication(id) {
     const query = 'DELETE FROM leave_applications WHERE id = $1 RETURNING *';
-    return pool.query(query, [id]);
+    return db.raw(query, [id]);
   }
 };
-
 module.exports = LeaveData;

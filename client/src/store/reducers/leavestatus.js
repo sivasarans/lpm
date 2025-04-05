@@ -37,7 +37,7 @@ export const fetchLeaveBalance_all_users = createAsyncThunk(
   'leave/fetchLeaveBalance/allUsers',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get('http://localhost:3700/');
+      const response = await axios.get('http://localhost:3700/leave/get-all-leave-balance/all-users/');
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);

@@ -192,6 +192,9 @@ const Sidebar = () => {
                 <NavLink to="/leave/assign">{t('Configuration')}</NavLink>
             </li>
             <li>
+                <NavLink to="/leave/configuration">{t('Configuration Beta')}</NavLink>
+            </li>
+            <li>
                 <NavLink to="/leave/reports">{t('Reports')}</NavLink>
             </li>
 
