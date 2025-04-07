@@ -76,15 +76,37 @@ function LeaveStatus() {
     }
   };
 
-  const userRequests = userData && userData.role_lpm === "Employee" ? leavestatusData.filter(request => request.user_id === userData.user_id) : leavestatusData;
+  const userRequests = userData && userData.role_lpm === "Employee" ? leavestatusData.filter(request => request.user_id === userData.userid) : leavestatusData;
+  // console.log("userRequests:", userRequests); // 🔍 Check userRequests her
+  // console.log("userData:", userData); // 🔍 Check userData here
 
-  const filteredRequests = userData?.role_lpm === 'Employee'
-    ? leavestatusData.filter((request) =>
-      request.user_id === userData.user_id && request.user_name.toLowerCase().includes(searchQuery.toLowerCase())
+  // console.log("leavestatusData:", leavestatusData.map(r => r.user_id));
+  // console.log("userData.userid:", userData.userid);
+
+  // const filteredRequests = userData?.role_lpm === 'Employee'
+  //   ? leavestatusData.filter((request) =>
+  //     request.user_id == userData.userid && request.user_name.toLowerCase().includes(searchQuery.toLowerCase())
+  //   )
+  //   : leavestatusData.filter((request) =>
+  //     request.user_name.toLowerCase().includes(searchQuery.toLowerCase())
+  //   );
+
+
+
+  const statusFilteredRequests = filterRequests(activeTab);
+
+const filteredRequests = userData?.role_lpm === 'Employee'
+  ? statusFilteredRequests.filter(
+      (request) =>
+        request.user_id == userData.userid &&
+        request.user_name.toLowerCase().includes(searchQuery.toLowerCase())
     )
-    : leavestatusData.filter((request) =>
-      request.user_name.toLowerCase().includes(searchQuery.toLowerCase())
+  : statusFilteredRequests.filter(
+      (request) =>
+        request.user_name.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+  console.log("filteredRequests:", filteredRequests); // 🔍 Check filteredRequests here
 
     const leaveTypeMap = {
       1: 'EL', 2: 'SL', 3: 'CL', 4: 'CO', 5: 'SO', 6: 'SML', 7: 'ML', 8: 'CW', 

@@ -193,22 +193,48 @@ res.status(201).json({ message: 'Leave application submitted successfully', data
     }
   },
 
+  // async deleteLeaveApplication(req, res) {
+  //   const { id } = req.params;
+
+  //   try {
+  //     const result = await LeaveData.deleteLeaveApplication(id);
+
+  //     if (result.rowCount === 0) {
+  //       return res.status(404).send('Leave application not found');
+  //     }
+
+  //     res.status(200).json({ message: 'Leave application deleted successfully', data: result.rows[0] });
+  //   } catch (err) {
+  //     console.error('Error deleting leave application:', err);
+  //     res.status(500).send('Internal Server Error');
+  //   }
+  // }
   async deleteLeaveApplication(req, res) {
     const { id } = req.params;
-
+  
     try {
-      const result = await LeaveData.deleteLeaveApplication(id);
 
-      if (result.rowCount === 0) {
+      const result = await LeaveData.deleteLeaveApplication(id);
+      console.log('Delete result:', result); // 🧾 Log the full result
+  
+const deletedRow = result?.[0]; // ✅ NOT result.rows[0]
+      if (!deletedRow) {
+        console.log('Leave not found with ID:', id);
         return res.status(404).send('Leave application not found');
       }
-
-      res.status(200).json({ message: 'Leave application deleted successfully', data: result.rows[0] });
+  
+      console.log('Leave deleted successfully:', deletedRow);
+      res.status(200).json({
+        message: 'Leave application deleted successfully',
+        data: deletedRow,
+      });
     } catch (err) {
       console.error('Error deleting leave application:', err);
       res.status(500).send('Internal Server Error');
     }
   }
+  
+  
 };
 
 module.exports = leaveDataController;

@@ -53,7 +53,8 @@ router.get('/get-all-status',
 router.put('/update-leave-status/:id',
     // auth.verifyToken,
      leaveDataController.updateLeaveStatus);
-router.delete('/delete-leave-request/:id',auth.verifyToken, leaveDataController.deleteLeaveApplication);
+router.delete('/delete-leave-request/:id',
+    leaveDataController.deleteLeaveApplication);
 
 module.exports = router;  
 
