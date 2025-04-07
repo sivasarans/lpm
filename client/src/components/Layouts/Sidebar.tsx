@@ -173,30 +173,30 @@ const Sidebar = () => {
             <li>
                 <NavLink to="/leave/status">{t('Status')}</NavLink>
             </li>
-            <li>
+            {/* <li>
                 <NavLink to="/leave/status1">{t('Status ( testing )')}</NavLink>
-            </li>
-            <li>
+            </li> */}
+            {/* <li>
                 <NavLink to="/leave/chart">{t('Chart')}</NavLink>
             </li>
             <li>
                 <NavLink to="/leave/chart1">{t('Chart1')}</NavLink>
-            </li>
+            </li> */}
             <li>
                 <NavLink to="/leave/balance">{t('Balance')}</NavLink>
             </li>
-            <li>
+            {/* <li>
                 <NavLink to="/leave/Calender">{t('Calender')}</NavLink>
-            </li>
-            <li>
+            </li> */}
+            {/* <li>
                 <NavLink to="/leave/assign">{t('Configuration')}</NavLink>
-            </li>
+            </li> */}
             <li>
-                <NavLink to="/leave/configuration">{t('Configuration Beta')}</NavLink>
+                <NavLink to="/leave/configuration">{t('Configuration')}</NavLink>
             </li>
-            <li>
+            {/* <li>
                 <NavLink to="/leave/reports">{t('Reports')}</NavLink>
-            </li>
+            </li> */}
 
         </ul>
     </AnimateHeight>
@@ -370,7 +370,14 @@ const Sidebar = () => {
             </li>
 
             <li>
-                <NavLink to="/calenderBeta">{t('Calender Beta')}</NavLink>
+                {/* <NavLink to="/calenderBeta">{t('Calender Beta')}</NavLink> */}
+<NavLink
+  to="/calenderBeta"
+  onClick={(e) => e.preventDefault()}
+  style={{ pointerEvents: 'none', color: 'gray' }}
+>
+{t('Calender Beta')} 🔒
+</NavLink>
             </li>
         
         </ul>
