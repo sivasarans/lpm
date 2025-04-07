@@ -40,14 +40,14 @@ const permissionController = {
 
   async updatePermissionStatus(req, res) {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, approved_by_name } = req.body;
 
     if (!status) {
       return res.status(400).json({ error: 'Status is required' });
     }
 
     try {
-      const updatedPermission = await Permission.updatePermissionStatus(id, status);
+      const updatedPermission = await Permission.updatePermissionStatus(id, status, approved_by_name);
 
       if (!updatedPermission) {
         return res.status(404).json({ error: 'Permission request not found' });

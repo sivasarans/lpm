@@ -5,7 +5,9 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 
 
-router.get('/',auth.verifyToken, leaveDataController.getAllLeaveData);
+// router.get('/',
+//     // auth.verifyToken, 
+//     leaveDataController.getAllLeaveData);
 
 router.get('/get-all-leave-balance/all-users',leaveDataController.getAllLeaveBalance);
 

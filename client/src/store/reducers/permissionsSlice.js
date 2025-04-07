@@ -13,10 +13,13 @@ export const fetchPermissions = createAsyncThunk(
 // Async thunk to update permission status
 export const updatePermissionStatus = createAsyncThunk(
   'permissions/updatePermissionStatus',
-  async ({ id, status }, { rejectWithValue }) => {
+  async ({ id, status , approved_by_name}, { rejectWithValue }) => {
     try {
-      await axios.put(`http://localhost:3700/permission/update/${id}`, { status });
-      return { id, status };
+      await axios.put(`http://localhost:3700/permission/update/${id}`, { 
+        status,
+        approved_by_name,
+       });
+      return { id, status , approved_by_name};
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
