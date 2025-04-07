@@ -28,8 +28,6 @@ function LeaveStatus() {
     const storedUserData = sessionStorage.getItem('user');
     if (storedUserData) {
       const userDetails = JSON.parse(storedUserData);
-        console.log("Session User:", userDetails); // 🔍 Check role_lpm and user_id here
-
       setUserData(userDetails);
       setIsAdminMode(userDetails.role_lpm === "Admin");
     }
@@ -133,7 +131,7 @@ function LeaveStatus() {
           ))}
         </div>
       </div>
-      {userData && userData.role_lpm === "Admin" && selectedRows.length > 0 && (
+      {userData && userData.role === "Admin" && selectedRows.length > 0 && (
         <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
           <Button variant="contained" color="primary" onClick={ApproveAllSelected}>Approve All</Button>
           <Button variant="contained" color="secondary" onClick={RejectAllSelected}>Reject All</Button>

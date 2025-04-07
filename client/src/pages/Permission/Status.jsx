@@ -49,7 +49,9 @@ function PermissionStatus() {
   }) : '-';
 
   const filteredData = data.filter(d => {
+    if (user?.role_lpm === 'Employee' && d.userid !== user.userid) return false;
     const values = [
+
       d.id, d.userid, formatDate(d.perm_date),
       formatTime(d.from_time), formatTime(d.to_time),
       d.total_hours, d.status, d.reason, d.approved_by

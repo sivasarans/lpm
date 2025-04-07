@@ -24,10 +24,34 @@ const leaveTypes = {
 const LeaveBalanceCount = () => {
   const [serverError, setServerError] = useState(false);
   const [showAll, setShowAll] = useState(false);
+  // const [userData, setUserData] = useState(null);
 
-  const userData = useSelector((state) => state.leavestatus.userData) || { user_id: "2" };
+  // const userData = useSelector((state) => state.leavestatus.userData) || { user_id: "2" };
+
+    // useEffect(() => {
+    //   const storedUserData = sessionStorage.getItem('user');
+    //   if (storedUserData) {
+    //     const userDetails = JSON.parse(storedUserData);
+    //     setUserData(userDetails);
+    //     // setIsAdminMode(userDetails.role_lpm === "Admin");
+    //   }
+    // }, []);
   // const leaveBalance_all_users = useSelector((state) => state.leavestatus.leaveBalance_all_users);
 
+
+
+  const userIdFromSession = useMemo(() => {
+    const sessionUser = sessionStorage.getItem("user");
+    if (!sessionUser) return null;
+    try {
+      const parsed = JSON.parse(sessionUser);
+      return parsed?.userid || null;
+    } catch {
+      return null;
+    }
+  }, []);
+
+  console.log("userIdFromSession:", userIdFromSession);
 
   const leaveBalance_all_users = useSelector(
     (state) => state.leavestatus.leaveBalance_all_users || []
@@ -45,9 +69,9 @@ const LeaveBalanceCount = () => {
 
   const leaveData = useMemo(() => {
     return leaveBalance_all_users?.filter(
-      (item) => String(item.userid) === String(userData.user_id)
+      (item) => String(item.userid) === String(userIdFromSession)
     ) || [];
-  }, [userData, leaveBalance_all_users]);
+  }, [userIdFromSession, leaveBalance_all_users]);
 
   return (
     <div className="p-2">
