@@ -8,7 +8,7 @@ const transporter = nodemailer.createTransport({
     pass: process.env.MAIL_PASSWORD || 'mbmb chvd micr dwki'
   }
 });
-
+// console.log('Mail transporter created:', transporter); // Log transporter creation
 const LeaveData = {
   async getAllLeaveApplications() {
     const res = await db.raw('SELECT * FROM leave_applications');    // console.log('Raw query result:', res); // Should show data
