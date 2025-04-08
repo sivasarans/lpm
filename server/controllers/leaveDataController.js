@@ -90,16 +90,16 @@ const leaveDataController = {
   },
 
   async applyLeave(req, res) {
-    const { user_id, user_name, leave_type, from_date, to_date, leave_days, reason } = req.body;
+    const { user_id, user_name, leave_type, from_date, to_date, leave_days, reason, mail } = req.body;
     console.log('📝 Leave application:', req.body);
 
-    if (!user_id || !user_name || !leave_type || !from_date || !to_date || !leave_days || !reason) {
+    if (!user_id || !user_name || !leave_type || !from_date || !to_date || !leave_days || !reason || !mail) {
       return res.status(400).send('All fields are required');
     }
 
     try {
       const filePath = req.file ? `/uploads/users_leave_documents/${req.file.filename}` : null;
-      const leaveApplication = { user_id, user_name, leave_type, from_date, to_date, leave_days, reason, file: filePath };
+      const leaveApplication = { user_id, user_name, leave_type, from_date, to_date, leave_days, reason, file: filePath, mail };
       // console.log("🛠 Applying leave to database with:", leaveApplication);
 
       const result = await LeaveData.applyLeave(leaveApplication);

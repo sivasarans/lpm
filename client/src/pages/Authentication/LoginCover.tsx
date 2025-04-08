@@ -62,7 +62,7 @@ const LoginCover = () => {
                 // document.cookie = `token=${response.AccessToken};  path=/; max-age=18000;`;
                 // document.cookie = `role=${response.data.role};  path=/; max-age=18000;`;
                 // document.cookie = `name=${response.data.name};  path=/; max-age=18000;`;
-                sessionStorage.setItem('user',JSON.stringify({ name: response.data.name, role: response.data.role, role_lpm: response.data.role_lpm, userid: response.data.id, token:response.AccessToken }));
+                sessionStorage.setItem('user',JSON.stringify({ name: response.data.name, role: response.data.role, role_lpm: response.data.role_lpm, userid: response.data.id, token:response.AccessToken, mail: response.data.email, }));
                 setState((prevState) => ({ ...prevState, loading: true, token: response.AccessToken }));
                 navigate('/');
             } else {

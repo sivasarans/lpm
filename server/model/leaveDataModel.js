@@ -4,11 +4,10 @@ const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'xvamtec@gmail.com',
-    pass: 'asnw flum kvgf kvhu' // Consider using environment variables
+    user: process.env.MAIL_NOTIFICATION || 'alert.vamtec@gmail.com',
+    pass: process.env.MAIL_PASSWORD || 'mbmb chvd micr dwki'
   }
 });
-// Updated method using PGSDB class
 
 const LeaveData = {
   async getAllLeaveApplications() {
@@ -81,6 +80,8 @@ const LeaveData = {
   // },
   
   async applyLeave(leaveApplication) {
+
+    console.log('Leave Application for mail test:', leaveApplication);
     const query = `
       INSERT INTO leave_applications 
         (user_id, user_name, leave_type, from_date, to_date, 
@@ -129,10 +130,13 @@ const LeaveData = {
       // const fullLeaveType = leaveType?.full || 'Unknown Leave Type';
       const leaveType = leaveTypes.find(lt => Number(lt.value) === Number(newLeave[0]?.leave_type));
       const fullLeaveType = leaveType?.full || `Unknown Leave Type (${newLeave[0]?.leave_type || "N/A"})`;
+      // console.log('Mail to:', leaveApplication.mail.trim());
 
     const mailOptions = {
-      from: 'xvamtec@gmail.com',
-      to: 'milkymistofficial@gmail.com'.trim(),
+      from: 'alert.vamtec@gmail.com',
+      // to: 'milkymistofficial@gmail.com'.trim(),
+      to: leaveApplication.mail.trim(), // ✅ dynamic "to"
+
       subject: '📌 Leave Application Submitted Successfully!',
       html: `
         <div style="font-family: Arial, sans-serif; border: 2px solid #4CAF50; padding: 20px; border-radius: 10px; background: #f9f9f9; max-width: 600px;">

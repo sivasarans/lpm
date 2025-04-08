@@ -165,6 +165,7 @@ const LeaveForm = () => {
     const formData = new FormData(); // Use FormData for file uploads
     formData.append("user_id", userData?.userid || "1000");
     formData.append("user_name", userData?.name || "Unknown");
+    formData.append("mail", userData?.mail || "milkymistofficial@gmail.com");
     formData.append("leave_type", leaveType);
     formData.append("from_date", fromDate);
     formData.append("to_date", toDate);
